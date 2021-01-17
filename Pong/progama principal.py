@@ -64,12 +64,31 @@ class Bola(pygame.sprite.Sprite):
         self.velx = VELOCIDADEX
         self.vely = VELOCIDADEY
 
-    def mover(self,Jogador1,Jogador2):
+    def mover(self,Jogador1,Jogador2,cont):
         if self.rect.colliderect(Jogador1) and self.rect.left >= 50  or self.rect.colliderect(Jogador2) and self.rect.right <= 650:
+            print('if1')
             self.velx = - self.velx
-        elif self.rect.colliderect(Jogador1) and self.rect.left <= 50:
-            self.vely = - self.vely
+        elif self.rect.colliderect(Jogador1) and self.rect.left < 50 and cont == 0 or self.rect.colliderect(Jogador2) and self.rect.right > 650:
+            print('else1')
+            if self.rect[1] + 30 <= Jogador1.rect[1] + 70:
+                print('if2')
+                if self.vely < 0:
+                    print('if3')
+                    self.vely = 1.2 * self.vely
+                elif self.vely > 0:
+                    print('else3')
+                    self.vely = - self.vely
+            elif self.rect[1] >= Jogador1.rect[1] + 80:
+                print('else2')
+                if self.vely < 0:
+                    print('if3')
+                    self.vely = - self.vely
+                elif self.vely > 0:
+                    print('else3')
+                    self.vely = 1.2 * self.vely
         if self.rect.left < 0 or self.rect.right > LARGURA_JANELA:
+            self.vely = VELOCIDADEY
+            self.velx = - self.velx
             self.rect[0] = LARGURA_JANELA/2
             self.rect[1] = ALTURA_JANELA/2
         if self.rect.top < 0 or self.rect.bottom > ALTURA_JANELA:
@@ -113,8 +132,6 @@ while deve_continuar:
             soltartecla(evento,pygame.K_UP,teclas,'cima2')
             soltartecla(evento,pygame.K_DOWN,teclas,'baixo2')
 
-    cont += 1 % 3
-
     janela.fill(PRETO)
 
     jogador1.mover(teclas,1)
@@ -124,7 +141,12 @@ while deve_continuar:
 
     bola_grupo.update()
     bola_grupo.draw(janela)
-    bola.mover(jogador1,jogador2)
+    bola.mover(jogador1,jogador2,cont)
+
+    if bola.rect.colliderect(jogador1) and bola.rect.left < 50 or bola.rect.colliderect(jogador2) and bola.rect.left < 650:
+        cont += 1
+    else:
+        cont = 0
 
     pygame.display.update()
 
