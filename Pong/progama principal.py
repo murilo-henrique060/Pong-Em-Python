@@ -1,19 +1,22 @@
 import pygame, time
 pygame.init()
 
+#Fundo
+FUNDO = pygame.image.load('E:\\Desktop\\Pong-Em-Python\\Pong\\Pong.png')
+
 #Bola
 TAMANHO_BOLA = 30
-VELOCIDADEX = 8
-VELOCIDADEY = 4
+VELOCIDADEX = 10
+VELOCIDADEY = 6
 
 #JANELA
-LARGURA_JANELA = 700
+LARGURA_JANELA = 800
 ALTURA_JANELA = 600
 
 #Jogador
 LARGURA_JOGADOR = 30
 ALTURA_JOGADOR = 150
-VELOCIDADE = 6
+VELOCIDADE = 8
 
 #Cores
 BRANCO = (255,255,255)
@@ -63,29 +66,26 @@ class Bola(pygame.sprite.Sprite):
         self.rect[1] = ALTURA_JANELA/2
         self.velx = VELOCIDADEX
         self.vely = VELOCIDADEY
+        self.cont = 0
 
-    def mover(self,Jogador1,Jogador2,cont):
-        if self.rect.colliderect(Jogador1) and self.rect.left >= 50  or self.rect.colliderect(Jogador2) and self.rect.right <= 650:
-            print('if1')
+    def mover(self,Jogador1,Jogador2):
+        if self.rect.colliderect(Jogador1) and self.rect.left >= 50 and self.cont == 0 or self.rect.colliderect(Jogador2) and self.rect.right <= 750 and self.cont == 0:
             self.velx = - self.velx
-        elif self.rect.colliderect(Jogador1) and self.rect.left < 50 and cont == 0 or self.rect.colliderect(Jogador2) and self.rect.right > 650:
-            print('else1')
-            if self.rect[1] + 30 <= Jogador1.rect[1] + 70:
-                print('if2')
+        elif self.rect.colliderect(Jogador1) and self.rect.left < 50 or self.rect.colliderect(Jogador2) and self.rect.right > 750:
+            if self.rect.colliderect(Jogador1) and self.rect[1] + 30 <= Jogador1.rect[1] + 70 or self.rect.colliderect(Jogador2) and self.rect[1] + 30 <= Jogador2.rect[1] + 70:
                 if self.vely < 0:
-                    print('if3')
-                    self.vely = 1.2 * self.vely
+                    self.vely *= 1.3
                 elif self.vely > 0:
-                    print('else3')
-                    self.vely = - self.vely
-            elif self.rect[1] >= Jogador1.rect[1] + 80:
-                print('else2')
+                    self.vely *= -1
+            elif self.rect.colliderect(Jogador1) and self.rect[1] >= Jogador1.rect[1] + 80 or self.rect.colliderect(Jogador2) and self.rect[1] >= Jogador2.rect[1] + 80:
                 if self.vely < 0:
-                    print('if3')
-                    self.vely = - self.vely
+                    self.vely *= -1
                 elif self.vely > 0:
-                    print('else3')
-                    self.vely = 1.2 * self.vely
+                    self.vely *= 1.3
+        if self.rect.colliderect(Jogador1) or self.rect.colliderect(Jogador2):
+            self.cont += 1
+        else:
+            self.cont = 0
         if self.rect.left < 0 or self.rect.right > LARGURA_JANELA:
             self.vely = VELOCIDADEY
             self.velx = - self.velx
@@ -104,12 +104,10 @@ bola_grupo.add(bola)
 
 jogador_grupo = pygame.sprite.Group()
 jogador1 = Jogador(30)
-jogador2 = Jogador(640)
+jogador2 = Jogador(740)
 jogador_grupo.add(jogador1,jogador2)
 
 teclas = {'cima':False,'baixo':False,'cima2':False,'baixo2':False}
-
-cont = 0
 
 relogio = pygame.time.Clock()
 
@@ -132,7 +130,7 @@ while deve_continuar:
             soltartecla(evento,pygame.K_UP,teclas,'cima2')
             soltartecla(evento,pygame.K_DOWN,teclas,'baixo2')
 
-    janela.fill(PRETO)
+    janela.blit(FUNDO, (0,0))
 
     jogador1.mover(teclas,1)
     jogador2.mover(teclas,2)
@@ -141,12 +139,7 @@ while deve_continuar:
 
     bola_grupo.update()
     bola_grupo.draw(janela)
-    bola.mover(jogador1,jogador2,cont)
-
-    if bola.rect.colliderect(jogador1) and bola.rect.left < 50 or bola.rect.colliderect(jogador2) and bola.rect.left < 650:
-        cont += 1
-    else:
-        cont = 0
+    bola.mover(jogador1,jogador2)
 
     pygame.display.update()
 
