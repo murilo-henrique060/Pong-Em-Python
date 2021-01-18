@@ -1,25 +1,35 @@
 import pygame
 pygame.init()
 
+#diretorio musica
+MUSICA = 'Pong\\PongSoundBlip.wav'
+MUSICA2 = 'Pong\\PongSoundBlip2.wav'
+MUSICA3 = 'Pong\\PongSoundGameOver.wav'
+
+#musica
+COLISAO = pygame.mixer.Sound(MUSICA)
+COLISAO2 = pygame.mixer.Sound(MUSICA2)
+GAMEOVER = pygame.mixer.Sound(MUSICA3)
+
 #Números
-NUM_0 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 0.png')
-NUM_1 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 1.png')
-NUM_2 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 2.png')
-NUM_3 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 3.png')
-NUM_4 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 4.png')
-NUM_5 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 5.png')
-NUM_6 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 6.png')
-NUM_7 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 7.png')
-NUM_8 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 8.png')
-NUM_9 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 9.png')
+NUM_0 = pygame.image.load('Pong\\numero 0.png')
+NUM_1 = pygame.image.load('Pong\\numero 1.png')
+NUM_2 = pygame.image.load('Pong\\numero 2.png')
+NUM_3 = pygame.image.load('Pong\\numero 3.png')
+NUM_4 = pygame.image.load('Pong\\numero 4.png')
+NUM_5 = pygame.image.load('Pong\\numero 5.png')
+NUM_6 = pygame.image.load('Pong\\numero 6.png')
+NUM_7 = pygame.image.load('Pong\\numero 7.png')
+NUM_8 = pygame.image.load('Pong\\numero 8.png')
+NUM_9 = pygame.image.load('Pong\\numero 9.png')
 
 #Fundo
-FUNDO = pygame.image.load('E:\\Desktop\\Pong-Em-Python\\Pong\\Pong.png')
+FUNDO = pygame.image.load('Pong\\Pong.png')
 
 #Bola
 TAMANHO_BOLA = 30
 VELOCIDADEX = 10
-VELOCIDADEY = 6
+VELOCIDADEY = 5
 
 #JANELA
 LARGURA_JANELA = 800
@@ -101,8 +111,15 @@ class Bola(pygame.sprite.Sprite):
         self.velx = VELOCIDADEX
         self.vely = VELOCIDADEY
         self.cont = 0
+        self.cont2 = 0
 
     def mover(self,Jogador1,Jogador2):
+        if self.rect.colliderect(Jogador1) or self.rect.colliderect(Jogador2):
+            if self.cont2 == 0:
+                pygame.mixer.Sound.play(COLISAO)
+            self.cont2 += 1
+        else:
+            self.cont2 = 0
         if self.rect.colliderect(Jogador1) and self.rect.left >= 50 and self.cont == 0 or self.rect.colliderect(Jogador2) and self.rect.right <= 750 and self.cont == 0:
             self.velx = - self.velx
         elif self.rect.colliderect(Jogador1) and self.rect.left < 50 or self.rect.colliderect(Jogador2) and self.rect.right > 750:
@@ -121,11 +138,13 @@ class Bola(pygame.sprite.Sprite):
         else:
             self.cont = 0
         if self.rect.left < 0 or self.rect.right > LARGURA_JANELA:
+            pygame.mixer.Sound.play(GAMEOVER)
             self.vely = VELOCIDADEY
             self.velx = - self.velx
             self.rect[0] = LARGURA_JANELA/2
             self.rect[1] = ALTURA_JANELA/2
         if self.rect.top < 0 or self.rect.bottom > ALTURA_JANELA:
+            pygame.mixer.Sound.play(COLISAO2)
             self.vely = - self.vely
         self.rect[0] += self.velx
         self.rect[1] += self.vely
