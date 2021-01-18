@@ -1,5 +1,17 @@
-import pygame, time
+import pygame
 pygame.init()
+
+#Números
+NUM_0 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 0.png')
+NUM_1 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 1.png')
+NUM_2 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 2.png')
+NUM_3 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 3.png')
+NUM_4 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 4.png')
+NUM_5 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 5.png')
+NUM_6 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 6.png')
+NUM_7 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 7.png')
+NUM_8 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 8.png')
+NUM_9 = pygame.image.load('E:\\Desktop\\Pong-Em-Python\Pong\\numero 9.png')
 
 #Fundo
 FUNDO = pygame.image.load('E:\\Desktop\\Pong-Em-Python\\Pong\\Pong.png')
@@ -21,6 +33,28 @@ VELOCIDADE = 8
 #Cores
 BRANCO = (255,255,255)
 PRETO = (0,0,0)
+
+def desenhar_ponto(superficie,pontuação,posição):
+    if pontuação == 0:
+        superficie.blit(NUM_0,posição)
+    if pontuação == 1:
+        superficie.blit(NUM_1,posição)
+    if pontuação == 2:
+        superficie.blit(NUM_2,posição)
+    if pontuação == 3:
+        superficie.blit(NUM_3,posição)
+    if pontuação == 4:
+        superficie.blit(NUM_4,posição)
+    if pontuação == 5:
+        superficie.blit(NUM_5,posição)
+    if pontuação == 6:
+        superficie.blit(NUM_6,posição)
+    if pontuação == 7:
+        superficie.blit(NUM_7,posição)
+    if pontuação == 8:
+        superficie.blit(NUM_8,posição)
+    if pontuação == 9:
+        superficie.blit(NUM_9,posição)
 
 def pressionartecla(evento,tecla,teclas,nometecla):
     if evento.key == tecla:
@@ -109,9 +143,15 @@ jogador_grupo.add(jogador1,jogador2)
 
 teclas = {'cima':False,'baixo':False,'cima2':False,'baixo2':False}
 
+jogador1_pontos = 0
+jogador2_pontos = 0
+
 relogio = pygame.time.Clock()
 
+cont = 0
+
 deve_continuar = True
+deve_iniciar = True
 
 while deve_continuar:
     for evento in pygame.event.get():
@@ -119,6 +159,7 @@ while deve_continuar:
             deve_continuar = False
 
         if evento.type == pygame.KEYDOWN:
+            deve_iniciar = False
             pressionartecla(evento,pygame.K_w,teclas,'cima')
             pressionartecla(evento,pygame.K_s,teclas,'baixo')
             pressionartecla(evento,pygame.K_UP,teclas,'cima2')
@@ -130,7 +171,29 @@ while deve_continuar:
             soltartecla(evento,pygame.K_UP,teclas,'cima2')
             soltartecla(evento,pygame.K_DOWN,teclas,'baixo2')
 
+    if deve_iniciar:
+        bola.velx = 0
+        bola.vely = 0
+    elif cont == 0:
+        bola.velx = VELOCIDADEX
+        bola.vely = VELOCIDADEY
+        cont += 1
+
+    if bola.rect.left < 0:
+        jogador2_pontos += 1
+    elif bola.rect.right > LARGURA_JANELA:
+        jogador1_pontos +=1
+
+    if jogador1_pontos == 10 or jogador2_pontos == 10:
+        deve_iniciar = True
+        cont = 0
+        jogador1_pontos = 0
+        jogador2_pontos = 0
+
     janela.blit(FUNDO, (0,0))
+
+    desenhar_ponto(janela,jogador1_pontos,(150,50))
+    desenhar_ponto(janela, jogador2_pontos,(525,50))
 
     jogador1.mover(teclas,1)
     jogador2.mover(teclas,2)
@@ -143,4 +206,4 @@ while deve_continuar:
 
     pygame.display.update()
 
-    relogio.tick(30)
+    relogio.tick(40)
