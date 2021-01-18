@@ -1,5 +1,6 @@
 from pygame import mixer,init,image,sprite,Surface,display,time,event,QUIT,KEYDOWN,KEYUP,K_w,K_s,K_UP,K_DOWN
 from random import randint
+from time import sleep
 init()
 
 #diretorio musica
@@ -151,6 +152,7 @@ class Bola(sprite.Sprite):
             self.cont = 0
         if self.rect.left < 0 or self.rect.right > LARGURA_JANELA:
             mixer.Sound.play(GAMEOVER)
+            sleep(1)
             POSy = randint(0,ALTURA_JANELA - TAMANHO_BOLA)
             VELOCIDADEx = randint(13,15)
             multiplicadorx = randint(0,1)
